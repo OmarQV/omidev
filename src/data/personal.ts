@@ -19,7 +19,7 @@ export const personalInfo = {
   
   availability: 'Available for Blockchain Development • Security Audits • Technical Consulting',
   
-  resume: '/docs/resume.pdf',
+  resume: '/docs/QuispeVargasOmar - CV.pdf',
 }
 
 export const socialLinks: SocialLink[] = [

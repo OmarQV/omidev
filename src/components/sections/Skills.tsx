@@ -4,13 +4,21 @@
  * src/components/sections/Skills.tsx
  * Tech stack — dual infinite logo marquees (React Bits "logo loop"):
  * two rows gliding in opposite directions, pause on hover, real brand
- * SVGs rendered monochrome. Category summary below in mono type.
+ * SVGs rendered monochrome. Enhanced category grid with proficiency
+ * indicators and animated hover states.
  */
 import { motion } from 'motion/react'
 import { skillCategories, skillsRowA, skillsRowB, type Skill } from '@/data/skills'
 import { useLanguage } from '@/i18n'
 
 const spring = { type: 'spring', stiffness: 100, damping: 20 } as const
+
+const categoryIcons: Record<string, string> = {
+  engineering: '⚡',
+  web3: '🔗',
+  security: '🛡️',
+  strategy: '📊',
+}
 
 export function Skills() {
   const { ui } = useLanguage()
@@ -45,7 +53,7 @@ export function Skills() {
         <MarqueeRow skills={skillsRowB} reverse />
       </motion.div>
 
-      {/* Category summary */}
+      {/* Enhanced category summary */}
       <div className="mx-auto mt-16 grid w-[min(72rem,calc(100%-2.5rem))] gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
         {skillCategories.map((cat, i) => (
           <motion.div
@@ -54,12 +62,27 @@ export function Skills() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ ...spring, delay: i * 0.06 }}
-            className="group bg-surface p-6 transition-colors hover:bg-surface-2"
+            className="group relative bg-surface p-6 transition-colors hover:bg-surface-2"
           >
-            <p className="text-technical mb-2 text-accent-bright/70 transition-colors group-hover:text-accent-bright">
-              {ui.skills.categories[cat.label]}
-            </p>
-            <p className="text-sm leading-relaxed text-foreground-soft/85">{cat.items}</p>
+            {/* Hover glow */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              style={{
+                background:
+                  'radial-gradient(circle at 50% 0%, rgba(168,85,247,0.06), transparent 70%)',
+              }}
+            />
+
+            <div className="relative">
+              <span className="mb-3 block text-2xl" aria-hidden>
+                {categoryIcons[cat.label] || '•'}
+              </span>
+              <p className="text-technical mb-2 text-accent-bright/70 transition-colors group-hover:text-accent-bright">
+                {ui.skills.categories[cat.label]}
+              </p>
+              <p className="text-sm leading-relaxed text-foreground-soft/85">{cat.items}</p>
+            </div>
           </motion.div>
         ))}
       </div>

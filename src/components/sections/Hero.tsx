@@ -2,14 +2,16 @@
 
 /**
  * src/components/sections/Hero.tsx
- * Editorial headline (white → lilac gradient highlight) + minimalist
- * CTAs + Magnetic Morphing Portrait with purple halo.
+ * Editorial headline with character-reveal animation, GlowButton CTA,
+ * Magnetic Morphing Portrait with purple halo + parallax.
  * Portrait: public/portrait.jpg (already in place).
  */
 import { useRef, useState } from 'react'
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
 import { ArrowRight, Github, Linkedin, Mail, Twitter } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { GlowButton } from '@/components/ui/glow-button'
+import { AnimatedText } from '@/components/ui/animated-text'
 import { profile, socialLinks, type SocialLink } from '@/data/profile'
 import { useLanguage } from '@/i18n'
 
@@ -50,23 +52,19 @@ export function Hero() {
             <span className="text-accent-bright">{profile.location}</span> — {profile.heroTagline}
           </motion.p>
 
-          <motion.h1
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.08}
-            className="text-display text-balance"
-          >
-            {t(profile.headline.lead)}
+          <h1 className="text-display text-balance">
+            <AnimatedText text={t(profile.headline.lead)} delay={0.08} />
             <br />
-            <span className="gradient-accent">{t(profile.headline.highlight)}</span>
-          </motion.h1>
+            <span className="gradient-accent">
+              <AnimatedText text={t(profile.headline.highlight)} delay={0.35} />
+            </span>
+          </h1>
 
           <motion.p
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            custom={0.18}
+            custom={0.5}
             className="mt-7 max-w-xl text-lg leading-relaxed text-muted"
           >
             {t(profile.subheadline)}
@@ -76,15 +74,13 @@ export function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            custom={0.28}
+            custom={0.6}
             className="mt-9 flex flex-wrap items-center gap-4"
           >
-            <Button size="lg" asChild>
-              <a href="#projects">
-                {ui.hero.viewProjects}
-                <ArrowRight className="h-4 w-4" />
-              </a>
-            </Button>
+            <GlowButton href="#projects">
+              {ui.hero.viewProjects}
+              <ArrowRight className="h-4 w-4" />
+            </GlowButton>
             <Button size="lg" variant="outline" asChild>
               <a href="#contact">{ui.hero.getInTouch}</a>
             </Button>
@@ -94,7 +90,7 @@ export function Hero() {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            custom={0.38}
+            custom={0.7}
             className="mt-11 flex gap-3"
             aria-label="Social profiles"
           >

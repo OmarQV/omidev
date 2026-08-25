@@ -215,3 +215,22 @@ body {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* ═══ Animated gradient spin (GlowButton) ══════════════════════ */
+
+@keyframes glow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.animate-glow-spin {
+  animation: glow-spin 3s linear infinite;
+}
+
+/* Card 3D tilt reset transition */
+.tilt-card {
+  transition: transform 0.15s ease-out;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+

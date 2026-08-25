@@ -2,8 +2,9 @@
 
 /**
  * src/components/sections/Contact.tsx
- * Interactive contact card — one-click email copy with live feedback,
- * direct mail CTA and social rail. Monochrome, hairline, minimal.
+ * Interactive contact card with ambient gradient backdrop,
+ * one-click email copy with live feedback, direct mail CTA
+ * and social rail. Enhanced visual depth.
  */
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -25,7 +26,17 @@ export function Contact() {
   const { ui } = useLanguage()
   return (
     <section id="contact" className="relative py-28">
-      <div className="mx-auto w-[min(72rem,calc(100%-2.5rem))]">
+      {/* Ambient background gradient */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            'radial-gradient(ellipse 70% 50% at 50% 80%, rgba(168,85,247,0.06), transparent)',
+        }}
+      />
+
+      <div className="relative mx-auto w-[min(72rem,calc(100%-2.5rem))]">
         {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}

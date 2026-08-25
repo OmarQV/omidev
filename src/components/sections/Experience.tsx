@@ -2,8 +2,9 @@
 
 /**
  * src/components/sections/Experience.tsx
- * Expandable trajectory timeline — monochrome rail with hairline
- * connectors; entries unfold with height-animated springs (100/20).
+ * Expandable trajectory timeline with enhanced animations —
+ * staggered scale-in entries, animated progress rail, and
+ * diversified reveal effects per entry.
  */
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -14,6 +15,13 @@ import { useLanguage } from '@/i18n'
 import { cn } from '@/lib/utils'
 
 const spring = { type: 'spring', stiffness: 100, damping: 20 } as const
+
+const entryVariants = [
+  { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 } },
+  { initial: { opacity: 0, x: -24 }, whileInView: { opacity: 1, x: 0 } },
+  { initial: { opacity: 0, scale: 0.96, y: 16 }, whileInView: { opacity: 1, scale: 1, y: 0 } },
+  { initial: { opacity: 0, y: 32 }, whileInView: { opacity: 1, y: 0 } },
+]
 
 export function Experience() {
   const [openId, setOpenId] = useState<string | null>(experience[0]?.id ?? null)
@@ -39,6 +47,16 @@ export function Experience() {
 
         {/* Timeline */}
         <div className="relative ml-2 border-l border-border pl-8 sm:ml-4 sm:pl-12">
+          {/* Animated progress line */}
+          <motion.div
+            initial={{ scaleY: 0, originY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 1.2, ease: 'easeOut' }}
+            className="absolute left-0 top-0 h-full w-px origin-top bg-gradient-to-b from-accent via-accent/40 to-transparent"
+            style={{ transformOrigin: 'top' }}
+          />
+
           {experience.map((entry, i) => (
             <TimelineItem
               key={entry.id}
@@ -67,22 +85,25 @@ function TimelineItem({
 }) {
   const panelId = `exp-panel-${entry.id}`
   const { t, ui } = useLanguage()
+  const variant = entryVariants[index % entryVariants.length]
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      {...variant}
       viewport={{ once: true, margin: '-60px' }}
-      transition={{ ...spring, delay: index * 0.06 }}
+      transition={{ ...spring, delay: index * 0.08 }}
       className="relative pb-10 last:pb-0"
     >
       {/* Node on the rail */}
-      <span
+      <motion.span
         aria-hidden
-        className={cn(
-          'absolute -left-[2.57rem] top-2 h-3 w-3 rounded-full border transition-colors duration-300 sm:-left-[3.57rem]',
-          isOpen ? 'border-accent bg-accent' : 'border-border-strong bg-background'
-        )}
+        animate={{
+          scale: isOpen ? 1.3 : 1,
+          borderColor: isOpen ? 'var(--color-accent)' : 'var(--color-border-strong)',
+          backgroundColor: isOpen ? 'var(--color-accent)' : 'var(--color-background)',
+        }}
+        transition={spring}
+        className="absolute -left-[2.57rem] top-2 h-3 w-3 rounded-full border sm:-left-[3.57rem]"
       />
 
       {/* Header — whole row is the toggle */}
@@ -128,11 +149,17 @@ function TimelineItem({
               </p>
 
               <ul className="mt-4 space-y-2">
-                {entry.highlights.map((h) => (
-                  <li key={h.en} className="flex gap-3 text-sm text-muted">
+                {entry.highlights.map((h, hi) => (
+                  <motion.li
+                    key={h.en}
+                    initial={{ opacity: 0, x: -12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ ...spring, delay: hi * 0.05 }}
+                    className="flex gap-3 text-sm text-muted"
+                  >
                     <span aria-hidden className="mt-[0.55rem] h-px w-4 shrink-0 bg-accent-dim" />
                     {t(h)}
-                  </li>
+                  </motion.li>
                 ))}
               </ul>
 

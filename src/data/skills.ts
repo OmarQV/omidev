@@ -1,160 +1,81 @@
-import type { Skill } from '@/types'
+/**
+ * src/data/skills.ts — tech stack with real brand logos.
+ * Icons come from the `simple-icons` package (SVG paths, self-hosted,
+ * tree-shaken per named import — no external requests).
+ */
+import {
+  siChainlink,
+  siDocker,
+  siEthereum,
+  siGit,
+  siGithub,
+  siGnubash,
+  siIpfs,
+  siJavascript,
+  siLinux,
+  siNextdotjs,
+  siNodedotjs,
+  siPostgresql,
+  siPrisma,
+  siPython,
+  siReact,
+  siSolidity,
+  siStellar,
+  siTailwindcss,
+  siTypescript,
+  siVercel,
+  type SimpleIcon,
+} from 'simple-icons'
 
-export const skills: Skill[] = [
-  // Blockchain & Web3
-  {
-    name: 'Solidity',
-    icon: '/img/icons/skills/solidity.svg',
-    level: 90,
-    category: 'blockchain'
-  },
-  {
-    name: 'Ethereum',
-    icon: '/img/icons/skills/ethereum.svg',
-    level: 85,
-    category: 'blockchain'
-  },
-  {
-    name: 'Web3.js',
-    icon: '/img/icons/skills/web3js.svg',
-    level: 85,
-    category: 'blockchain'
-  },
-  {
-    name: 'Smart Contracts',
-    icon: '/img/icons/skills/contract.svg',
-    level: 90,
-    category: 'blockchain'
-  },
-  
-  // Languages
-  {
-    name: 'JavaScript',
-    icon: '/img/icons/skills/javascript-color.svg',
-    level: 90,
-    category: 'languages'
-  },
-  {
-    name: 'TypeScript',
-    icon: '/img/icons/skills/typeScript.svg',
-    level: 85,
-    category: 'languages'
-  },
-  {
-    name: 'Bash',
-    icon: '/img/icons/skills/bash.svg',
-    level: 80,
-    category: 'languages'
-  },
-  
-  // Frontend
-  {
-    name: 'React',
-    icon: '/img/icons/skills/react-dark.svg',
-    level: 90,
-    category: 'frontend'
-  },
-  {
-    name: 'Next.js',
-    icon: '/img/icons/skills/next.svg',
-    level: 85,
-    category: 'frontend'
-  },
-  {
-    name: 'Vue.js',
-    icon: '/img/icons/skills/vue.svg',
-    level: 80,
-    category: 'frontend'
-  },
-  {
-    name: 'Astro',
-    icon: '/img/icons/skills/astro.svg',
-    level: 75,
-    category: 'frontend'
-  },
-  {
-    name: 'HTML5',
-    icon: '/img/icons/skills/HTML5.svg',
-    level: 95,
-    category: 'frontend'
-  },
-  {
-    name: 'CSS3',
-    icon: '/img/icons/skills/CSS3.svg',
-    level: 90,
-    category: 'frontend'
-  },
-  {
-    name: 'Tailwind CSS',
-    icon: '/img/icons/skills/tailwindcss.svg',
-    level: 90,
-    category: 'frontend'
-  },
-  {
-    name: 'Sass',
-    icon: '/img/icons/skills/sass.svg',
-    level: 85,
-    category: 'frontend'
-  },
-  {
-    name: 'Styled Components',
-    icon: '/img/icons/skills/styledcomponents.svg',
-    level: 80,
-    category: 'frontend'
-  },
-  
-  // Backend & Databases
-  {
-    name: 'Node.js',
-    icon: '/img/icons/skills/nodejs-dark.svg',
-    level: 85,
-    category: 'backend'
-  },
-  {
-    name: 'MySQL',
-    icon: '/img/icons/skills/mysql.svg',
-    level: 80,
-    category: 'backend'
-  },
-  {
-    name: 'Supabase',
-    icon: '/img/icons/skills/supabase.svg',
-    level: 75,
-    category: 'backend'
-  },
-  {
-    name: 'WordPress',
-    icon: '/img/icons/skills/wordpress.svg',
-    level: 80,
-    category: 'backend'
-  },
-  
-  // Security & Tools
-  {
-    name: 'Git',
-    icon: '/img/icons/skills/git.svg',
-    level: 90,
-    category: 'tools'
-  },
-  {
-    name: 'Ubuntu',
-    icon: '/img/icons/skills/ubuntu.svg',
-    level: 85,
-    category: 'tools'
-  },
-  {
-    name: 'Vercel',
-    icon: '/img/icons/skills/vercel.svg',
-    level: 80,
-    category: 'tools'
-  }
+export interface Skill {
+  name: string
+  icon: SimpleIcon
+}
+
+/** Row A — languages & frameworks */
+export const skillsRowA: readonly Skill[] = [
+  { name: 'TypeScript', icon: siTypescript },
+  { name: 'JavaScript', icon: siJavascript },
+  { name: 'React', icon: siReact },
+  { name: 'Next.js', icon: siNextdotjs },
+  { name: 'Node.js', icon: siNodedotjs },
+  { name: 'Python', icon: siPython },
+  { name: 'Tailwind CSS', icon: siTailwindcss },
+  { name: 'PostgreSQL', icon: siPostgresql },
+  { name: 'Prisma', icon: siPrisma },
+  { name: 'Vercel', icon: siVercel },
 ]
 
-export const skillCategories = {
-  blockchain: skills.filter(s => s.category === 'blockchain'),
-  languages: skills.filter(s => s.category === 'languages'),
-  frontend: skills.filter(s => s.category === 'frontend'),
-  backend: skills.filter(s => s.category === 'backend'),
-  security: skills.filter(s => s.category === 'security'),
-  tools: skills.filter(s => s.category === 'tools')
-}
+/** Row B — web3, security & infra */
+export const skillsRowB: readonly Skill[] = [
+  { name: 'Solidity', icon: siSolidity },
+  { name: 'Ethereum', icon: siEthereum },
+  { name: 'Stellar', icon: siStellar },
+  { name: 'Chainlink', icon: siChainlink },
+  { name: 'IPFS', icon: siIpfs },
+  { name: 'Docker', icon: siDocker },
+  { name: 'Linux', icon: siLinux },
+  { name: 'Bash', icon: siGnubash },
+  { name: 'Git', icon: siGit },
+  { name: 'GitHub', icon: siGithub },
+]
+
+/** Compact category summary rendered under the marquee */
+export const skillCategories = [
+  {
+    label: 'engineering',
+    items: 'TypeScript · React · Next.js · Node.js · PostgreSQL',
+  },
+  {
+    label: 'web3',
+    items: 'Solidity · Soroban · Foundry · Ethereum · Stellar',
+  },
+  {
+    label: 'security',
+    items: 'Slither · Nmap · Nuclei · Burp · Threat Modeling',
+  },
+  {
+    label: 'strategy',
+    items: 'Tokenomics · Market Analysis · Pitch · Budgeting',
+  },
+] as const

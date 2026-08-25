@@ -1,206 +1,190 @@
-import { motion, useInView } from 'framer-motion'
-import { useRef, useState } from 'react'
-import { Mail, MapPin, Send, Github, Linkedin, Twitter } from 'lucide-react'
-import { Container, Card, Button } from '@/components/ui'
-import { personalInfo, socialLinks } from '@/data/personal'
+'use client'
 
-const iconMap: Record<string, any> = {
-  Github,
-  Linkedin,
-  Twitter,
-  Mail
+/**
+ * src/components/sections/Contact.tsx
+ * Interactive contact card — one-click email copy with live feedback,
+ * direct mail CTA and social rail. Monochrome, hairline, minimal.
+ */
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { ArrowUpRight, Check, Copy, Github, Linkedin, Mail, Twitter } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { profile, socialLinks, type SocialLink } from '@/data/profile'
+import { useLanguage } from '@/i18n'
+
+const spring = { type: 'spring', stiffness: 100, damping: 20 } as const
+
+const socialIcons: Record<SocialLink['icon'], typeof Github> = {
+  github: Github,
+  linkedin: Linkedin,
+  twitter: Twitter,
+  mail: Mail,
 }
 
-export default function Contact() {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: "-100px" })
-  const [formState, setFormState] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+export function Contact() {
+  const { ui } = useLanguage()
+  return (
+    <section id="contact" className="relative py-28">
+      <div className="mx-auto w-[min(72rem,calc(100%-2.5rem))]">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={spring}
+          className="mb-14"
+        >
+          <p className="text-technical mb-4 text-accent-bright">{ui.contact.kicker}</p>
+          <h2 className="text-display">
+            {ui.contact.titleA}
+            <br />
+            {ui.contact.titleB}{' '}
+            <span className="gradient-accent">{ui.contact.titleHighlight}</span>
+          </h2>
+        </motion.div>
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    alert('Message sent! (This is a demo)')
-    setFormState({ name: '', email: '', message: '' })
-    setIsSubmitting(false)
-  }
+        {/* Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ ...spring, delay: 0.08 }}
+          className="border-glow overflow-hidden rounded-2xl border border-border bg-surface"
+        >
+          <div className="grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.2fr_0.8fr]">
+            {/* Left: pitch + email */}
+            <div>
+              <p className="max-w-lg text-base leading-relaxed text-muted">{ui.contact.pitch}</p>
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormState(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
+              <div className="mt-8">
+                <p className="text-technical mb-3 text-accent-bright/70">
+                  {ui.contact.directLine}
+                </p>
+                <CopyEmail email={profile.email} />
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <Button size="lg" asChild>
+                  <a
+                    href={`mailto:${profile.email}?subject=${encodeURIComponent(ui.contact.mailSubject)}`}
+                  >
+                    {ui.contact.writeMe}
+                    <ArrowUpRight className="h-4 w-4" />
+                  </a>
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: metadata + socials */}
+            <div className="flex flex-col justify-between gap-8 lg:border-l lg:border-border lg:pl-10">
+              <dl className="space-y-5">
+                <div>
+                  <dt className="text-technical mb-1 text-muted-dark">{ui.contact.location}</dt>
+                  <dd className="text-sm text-foreground-soft">{profile.location}</dd>
+                </div>
+                <div>
+                  <dt className="text-technical mb-1 text-muted-dark">{ui.contact.status}</dt>
+                  <dd className="flex items-center gap-2 text-sm text-foreground-soft">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-status opacity-60" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-status" />
+                    </span>
+                    {ui.footer.available}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-technical mb-1 text-muted-dark">
+                    {ui.contact.responseTime}
+                  </dt>
+                  <dd className="text-sm text-foreground-soft">{ui.contact.responseValue}</dd>
+                </div>
+              </dl>
+
+              <ul className="flex gap-3" aria-label="Social profiles">
+                {socialLinks.map((link) => {
+                  const Icon = socialIcons[link.icon]
+                  return (
+                    <li key={link.name}>
+                      <a
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={link.name}
+                        className="flex h-10 w-10 items-center justify-center rounded-full border border-border text-muted transition-all duration-200 hover:-translate-y-0.5 hover:border-accent-border hover:text-accent-bright"
+                      >
+                        <Icon className="h-4 w-4" strokeWidth={1.5} />
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}
+
+/* ═══ One-click email copy ═════════════════════════════════════ */
+
+function CopyEmail({ email }: { email: string }) {
+  const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const { ui } = useLanguage()
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(email)
+      setCopied(true)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      timeoutRef.current = setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard unavailable (permissions/http) — fall back to mailto
+      window.location.href = `mailto:${email}`
+    }
   }
 
   return (
-    <section id="contact" className="py-20 relative bg-slate-900/50" ref={ref}>
-      <Container size="lg">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Section Header */}
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
-              Get In <span className="gradient-text">Touch</span>
-            </h2>
-            <p className="text-slate-400 text-base max-w-2xl mx-auto">
-              Available for Blockchain Development, Security Audits & Technical Consulting
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Contact Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+    <button
+      type="button"
+      onClick={handleCopy}
+      aria-live="polite"
+      className="group inline-flex items-center gap-3 rounded-full border border-border bg-surface-2 py-2.5 pl-5 pr-3 transition-colors hover:border-accent-border"
+    >
+      <span className="font-mono text-sm text-foreground-soft sm:text-base">{email}</span>
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-foreground text-background transition-transform duration-200 group-hover:scale-105">
+        <AnimatePresence mode="wait" initial={false}>
+          {copied ? (
+            <motion.span
+              key="check"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={spring}
             >
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">
-                    Let's Talk
-                  </h3>
-                  <p className="text-slate-400 mb-6">
-                    I'm always open to discussing new projects, creative ideas, or opportunities to be part of your vision.
-                  </p>
-                </div>
-
-                {/* Contact Details */}
-                <Card variant="glass" className="p-6">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 bg-primary-500/10 rounded-lg">
-                        <Mail className="w-5 h-5 text-primary-400" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-slate-400 mb-1">Email</div>
-                        <a
-                          href={`mailto:${personalInfo.email}`}
-                          className="text-white hover:text-primary-400 transition-colors"
-                        >
-                          {personalInfo.email}
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-4">
-                      <div className="p-3 bg-primary-500/10 rounded-lg">
-                        <MapPin className="w-5 h-5 text-primary-400" />
-                      </div>
-                      <div>
-                        <div className="text-sm text-slate-400 mb-1">Location</div>
-                        <div className="text-white">{personalInfo.location}</div>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Social Links */}
-                <div>
-                  <div className="text-sm text-slate-400 mb-4">Connect with me</div>
-                  <div className="flex gap-3">
-                    {socialLinks.map((link) => {
-                      const Icon = iconMap[link.icon]
-                      return (
-                        <motion.a
-                          key={link.name}
-                          href={link.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-primary-500 hover:bg-slate-800 transition-all duration-300"
-                          whileHover={{ scale: 1.05, y: -2 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Icon className="w-5 h-5 text-slate-400 hover:text-primary-400" />
-                        </motion.a>
-                      )
-                    })}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
+              <Check className="h-3.5 w-3.5" strokeWidth={2} />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="copy"
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={spring}
             >
-              <Card variant="gradient" className="p-8">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formState.name}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                      placeholder="John Doe"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formState.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
-                      placeholder="john@example.com"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-slate-300 mb-2">
-                      Your Message
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formState.message}
-                      onChange={handleChange}
-                      required
-                      rows={5}
-                      className="w-full px-4 py-3 bg-slate-900/50 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Tell me about your project..."
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full"
-                    isLoading={isSubmitting}
-                  >
-                    {!isSubmitting && <Send className="mr-2 w-5 h-5" />}
-                    Send Message
-                  </Button>
-                </form>
-              </Card>
-            </motion.div>
-          </div>
-        </motion.div>
-      </Container>
-    </section>
+              <Copy className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </span>
+      <span className="sr-only">{copied ? ui.contact.copied : ui.contact.copyEmail}</span>
+    </button>
   )
 }

@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/**
+ * ═══════════════════════════════════════════════════════════════
+ * OMIDEV — React Bits Pro Monochrome System
+ * Tailwind CSS v4 native variables. Rigorous black & white:
+ * depth comes from surface elevation and borders, never from hue.
+ * ═══════════════════════════════════════════════════════════════
+ */
+@theme {
+  /* ── Monochrome scale ─────────────────────────────────────── */
+  --color-background: #000000;      /* Pure black canvas             */
+  --color-surface: #0a0a0a;         /* Cards, terminal, nav pill     */
+  --color-surface-2: #121212;       /* Raised / hover elevation      */
+  --color-border: #1f1f1f;          /* Hairline borders              */
+  --color-border-strong: #2e2e32;   /* Focused / active borders      */
+
+  --color-foreground: #ffffff;      /* Display headlines             */
+  --color-foreground-soft: #f4f4f5; /* Body text (zinc-100)          */
+  --color-muted: #71717a;           /* Descriptions, metadata        */
+  --color-muted-dark: #52525b;      /* Tertiary, timestamps          */
+
+  /* Signal color: availability status dot                         */
+  --color-status: #4ade80;
+
+  /* ── Accent: semi-dark lilac/purple (React Bits) ─────────────── */
+  --color-accent: #a855f7;
+  --color-accent-bright: #c084fc;
+  --color-accent-dim: #7c3aed;
+  --color-accent-deep: #3b0764;
+  --color-accent-faint: rgba(168, 85, 247, 0.08);
+  --color-accent-border: rgba(168, 85, 247, 0.35);
+
+  /* ── Typography ───────────────────────────────────────────── */
+  --font-sans: 'Inter Variable', system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), 'JetBrains Mono', monospace;
+}
+
+/* ═══ Base ═════════════════════════════════════════════════════ */
+
+html {
+  /* Lenis owns scrolling — native smooth behavior must stay off */
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground-soft);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ═══ Editorial type system ════════════════════════════════════ */
+
+.text-display {
+  /* Editorial headline: tight tracking, heavy weight, contained scale */
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  letter-spacing: -0.045em;
+  font-weight: 800;
+  line-height: 1.02;
+  color: var(--color-foreground);
+}
+
+.text-heading {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  letter-spacing: -0.03em;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-foreground);
+}
+
+.text-technical {
+  /* Floating labels, states, network indicators */
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ═══ Monochrome premium utilities ═════════════════════════════ */
+
+/* Frosted pill / cards over the WebGL backdrop */
+.glass {
+  background-color: rgba(10, 10, 10, 0.72);
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border: 1px solid var(--color-border);
+}
+
+/* Hairline gradient border that ignites on hover (white light) */
+.border-glow {
+  position: relative;
+}
+.border-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.65), transparent 45%, transparent 55%, rgba(192, 132, 252, 0.3));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.border-glow:hover::before {
+  opacity: 1;
+}
+
+/* Infinite logo marquee (React Bits "logo loop") */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+.marquee-track.marquee-reverse {
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* Hide native scrollbar on horizontal rails */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* React Bits-style dotted backdrop — pure CSS, replaces WebGL */
+.dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, black 30%, transparent 75%);
+}
+
+/* Soft white text glow for hero emphasis */
+.text-glow {
+  text-shadow: 0 0 40px rgba(255, 255, 255, 0.25);
+}
+
+/* White → lilac gradient for headline highlights (React Bits style) */
+.gradient-accent {
+  background: linear-gradient(100deg, #ffffff 10%, #c084fc 60%, #a855f7 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Ambient purple halo behind featured surfaces */
+.accent-halo {
+  box-shadow: 0 0 48px rgba(168, 85, 247, 0.14), 0 0 120px rgba(124, 58, 237, 0.07);
+}
+
+/* ═══ Selection / scrollbar / focus ════════════════════════════ */
+
+::selection {
+  background-color: rgba(168, 85, 247, 0.55);
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-dim);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
